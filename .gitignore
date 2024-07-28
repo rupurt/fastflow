@@ -1,0 +1,22 @@
+# editors
+.idea
+
+# env
+/.direnv
+/.local
+
+# local config
+/.config
+
+# python
+/.coverage
+/.ruff_cache
+/.venv
+__pycache__/
+*.egg-info/
+/dist
+
+# nix
+/.nix
+/result
+/.dream2nix
