@@ -29,6 +29,7 @@ COMMANDS:
 - [pypi](#pypi)
   - [build](#pypi-build)
   - [publish](#pypi-publish)
+  - [clean](#pypi-clean)
 
 ### setup
 
@@ -61,7 +62,7 @@ OPTIONS:
 ### dream2nix
 
 ```console
-> dev dream2nix -h
+> dev dream2nix
 Manage nix flake dev shell & python deps
 
 USAGE: dev dream2nix <COMMAND>
@@ -72,7 +73,7 @@ COMMANDS:
   clean  Delete dream2nix artifacts
 ```
 
-### dream2nix lock
+#### dream2nix lock
 
 ```console
 > dev dream2nix lock -h
@@ -84,7 +85,7 @@ USAGE: dev dream2nix lock
   -h, --help     Print help
 ```
 
-### dream2nix build
+#### dream2nix build
 
 ```console
 > dev dream2nix build -h
@@ -98,7 +99,7 @@ OPTIONS:
   -h, --help     Print help
 ```
 
-### dream2nix clean
+#### dream2nix clean
 
 ```console
 > dev dream2nix clean -h
@@ -107,7 +108,22 @@ Delete dream2nix artifacts
 USAGE: dev dream2nix clean
 ```
 
-### pypi build
+
+### pypi
+
+```console
+> dev pypi
+Python package management
+
+USAGE: dev pypi <COMMAND>
+
+COMMANDS:
+  build    Build distribution package
+  publish  Publish distribution package
+  clean    Delete distribution package
+```
+
+#### pypi build
 
 ```console
 > dev pypi build -h
@@ -116,11 +132,20 @@ Build distribution package
 USAGE: dev pypi build
 ```
 
-### pypi publish
+#### pypi publish
 
 ```console
 > dev pypi publish -h
 Publish distribution package
 
 USAGE: dev pypi publish
+```
+
+#### pypi clean
+
+```console
+> dev pypi clean -h
+Delete distribution package
+
+USAGE: dev pypi clean
 ```

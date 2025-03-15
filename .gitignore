@@ -1,22 +1,25 @@
-# editors
+# Editors
 .idea
 
-# env
+# Env
 /.direnv
 /.local
 
-# local config
+# Local config
 /.config
 
-# python
+# Python
 /.coverage
 /.ruff_cache
 /.venv
+/dist
 __pycache__/
 *.egg-info/
-/dist
 
-# nix
+# Pdm
+/.pdm-python
+
+# Nix
 /.nix
 /result
 /.dream2nix

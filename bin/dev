@@ -45,10 +45,10 @@ dream2nix::lock() {
 	[[ $argc_prod -eq 1 ]] && flag_count+=1
 	[[ $argc_dev -eq 1 ]] && flag_count+=1
 	if [[ $flag_count -eq 0 ]] || [[ $argc_prod -eq 1 ]]; then
-	  runp "nix run .#prod.lock"
+		runp "pdm lock --lockfile pdm.prod.lock --prod --update-reuse"
 	fi
 	if [[ $flag_count -eq 0 ]] || [[ $argc_dev -eq 1 ]]; then
-	  runp "nix run .#dev.lock"
+		runp "pdm lock --lockfile pdm.dev.lock --dev --update-reuse"
 	fi
 }
 
@@ -85,6 +85,11 @@ pypi::build() {
 # @cmd Publish distribution package
 pypi::publish() {
   runp "python -m twine upload dist/*"
+}
+#
+# @cmd Delete distribution package
+pypi::clean() {
+  runp "rm -rf dist"
 }
 
 # Parse args and apply them to the specified function
