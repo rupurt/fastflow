@@ -3,52 +3,43 @@
   lib,
   dream2nix,
   ...
-}: let
-  pyproject = lib.importTOML (config.mkDerivation.src + /pyproject.toml);
-in {
+}: {
   imports = [
-    dream2nix.modules.dream2nix.pip
-    dream2nix.modules.dream2nix.flags
+    dream2nix.modules.dream2nix.WIP-python-pdm
   ];
+
+  pdm = {
+    pyproject = ./pyproject.toml;
+  };
 
   deps = {
     nixpkgs,
     self,
     ...
   }: {
-    stdenv = nixpkgs.stdenv;
+    inherit
+      (nixpkgs)
+      zlib
+      ;
     python = nixpkgs.python312;
+    pythonPackages = nixpkgs.python312Packages;
   };
-
-  flagsOffered = {
-    groupDev = "include dependencies for optional [dev] pip group";
-  };
-
-  flags = {
-    groupDev = lib.mkDefault false;
-  };
-
-  inherit (pyproject.project) name version;
 
   mkDerivation = {
-    src = ./.;
+    src = lib.cleanSourceWith {
+      src = lib.cleanSource ./.;
+      filter = name: type:
+        !(builtins.any (x: x) [
+          (lib.hasSuffix ".nix" name)
+          (lib.hasPrefix "." (builtins.baseNameOf name))
+          (lib.hasSuffix "flake.lock" name)
+        ]);
+    };
     buildInputs = [
       config.deps.python
     ];
   };
 
-  buildPythonPackage = {
-    format = lib.mkForce "pyproject";
-  };
-
-  pip = {
-    requirementsList =
-      pyproject.build-system.requires
-      or []
-      ++ pyproject.project.dependencies
-      ++ lib.optionals (config.flags.groupDev) pyproject.project.optional-dependencies.dev;
-    flattenDependencies = true;
-    overrideAll.deps.python = lib.mkForce config.deps.python;
-    overrides = { };
+  overrides = {
   };
 }

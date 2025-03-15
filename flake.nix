@@ -2,94 +2,96 @@
   description = "Fastflow. In process streaming workflow engine";
 
   inputs = {
-    dream2nix.url = "github:nix-community/dream2nix";
+    dream2nix.url = "github:nix-community/dream2nix?rev=1a5e625de7715a542bc4a15ec30fc05a48924c0d";
     nixpkgs.follows = "dream2nix/nixpkgs";
   };
 
   outputs = {
     self,
+    flake-utils,
     dream2nix,
     nixpkgs,
     ...
   }: let
-    supportedSystems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
-    forEachSupportedSystem = f:
-      nixpkgs.lib.genAttrs supportedSystems (supportedSystem:
-        f rec {
-          system = supportedSystem;
-          pkgs = import nixpkgs {
-            inherit system;
-            overlays = [ ];
-          };
-          db2Driver =
-            if pkgs.stdenv.isLinux
-            then "${pkgs.odbc-driver-pkgs.db2-odbc-driver}/lib/libdb2o.so"
-            else "${pkgs.odbc-driver-pkgs.db2-odbc-driver}/lib/libdb2o.dylib";
-        });
-  in {
-    packages = forEachSupportedSystem ({pkgs, ...}: rec {
-      prod = dream2nix.lib.evalModules {
-        packageSets.nixpkgs = pkgs;
-        modules = [
-          ./default.nix
-          {
-            paths.projectRoot = ./.;
-            paths.projectRootFile = "flake.nix";
-            paths.package = ./.;
-            paths.lockFile =
-              if pkgs.stdenv.isDarwin
-              then "lock.prod.darwin.json"
-              else "lock.prod.linux.json";
-          }
+    systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
+    outputs = flake-utils.lib.eachSystem systems (system: let
+      pkgs = import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+        overlays = [
+          self.overlay
         ];
       };
-      dev = dream2nix.lib.evalModules {
-        packageSets.nixpkgs = pkgs;
-        modules = [
-          ./default.nix
-          {
-            paths.projectRoot = ./.;
-            paths.projectRootFile = "flake.nix";
-            paths.package = ./.;
-            paths.lockFile =
-              if pkgs.stdenv.isDarwin
-              then "lock.dev.darwin.json"
-              else "lock.dev.linux.json";
-            flags.groupDev = true;
-          }
-        ];
+      get_dev_packages = groups:
+        with groups;
+          lint.packages
+          // test.packages
+          // dist.packages;
+    in rec {
+      # packages exported by the flake
+      packages = rec {
+        prod = dream2nix.lib.evalModules {
+          packageSets.nixpkgs = pkgs;
+          modules = [
+            ./default.nix
+            {
+              paths.projectRoot = ./.;
+              paths.projectRootFile = "flake.nix";
+              paths.package = ./.;
+              pdm.lockfile = ./pdm.prod.lock;
+            }
+          ];
+        };
+        dev = dream2nix.lib.evalModules {
+          packageSets.nixpkgs = pkgs;
+          modules = [
+            ./default.nix
+            {
+              paths.projectRoot = ./.;
+              paths.projectRootFile = "flake.nix";
+              paths.package = ./.;
+              pdm.lockfile = ./pdm.dev.lock;
+            }
+          ];
+        };
+        default = prod;
       };
-      default = prod;
-    });
 
-    # nix fmt
-    formatter = forEachSupportedSystem ({pkgs, ...}: pkgs.alejandra);
+      # nix fmt
+      formatter = pkgs.alejandra;
 
-    # nix develop
-    devShells = forEachSupportedSystem ({
-      system,
-      pkgs,
-      ...
-    }: {
       # nix develop -c $SHELL
-      default = pkgs.mkShell {
+      devShells.default = pkgs.mkShell {
         inputsFrom = [
           self.packages.${system}.dev.devShell
         ];
 
-        packages = with pkgs;
-          [
-            argc
-          ];
+        # dream2nix doesn't currently support automatically loading groups or PEP 735 yet
+        # - https://github.com/nix-community/dream2nix/issues/1000
+        # - https://peps.python.org/pep-0735/
+        buildInputs =
+          []
+          ++ map (x: (pkgs.lib.head (pkgs.lib.attrValues x)).public) (
+            pkgs.lib.attrValues (get_dev_packages self.packages."${system}".dev.config.groups)
+          );
+
+        packages = with pkgs; [
+          packages.dev
+          argc
+        ];
 
         shellHook = ''
           export IN_NIX_DEVSHELL=1;
         '';
       };
     });
-
-    overlay = final: prev: {
-      fastflow = self.packages.${prev.system};
+  in
+    outputs
+    // {
+      # Overlay that can be imported so you can access the packages
+      # using fastflow.overlay
+      overlay = final: prev: {
+        fastflow = outputs.packages.${prev.system};
+      };
     };
-  };
 }
