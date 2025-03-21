@@ -25,6 +25,11 @@
       get_dev_packages = groups:
         with groups;
           lint.packages
+          // cli.packages
+          // kafka.packages
+          // iggy.packages
+          // flight.packages
+          // http.packages
           // test.packages
           // dist.packages;
     in rec {

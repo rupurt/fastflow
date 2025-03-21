@@ -1,0 +1,2 @@
+class KafkaAdminError(RuntimeError):
+    pass

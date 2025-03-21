@@ -1,0 +1,2 @@
+class ABCConnector:
+    pass

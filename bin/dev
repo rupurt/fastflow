@@ -45,10 +45,26 @@ dream2nix::lock() {
 	[[ $argc_prod -eq 1 ]] && flag_count+=1
 	[[ $argc_dev -eq 1 ]] && flag_count+=1
 	if [[ $flag_count -eq 0 ]] || [[ $argc_prod -eq 1 ]]; then
-		runp "pdm lock --lockfile pdm.prod.lock --prod --update-reuse"
+		runp "pdm lock \
+      --lockfile pdm.prod.lock \
+      --prod \
+      --group cli \
+      --group kafka \
+      --group iggy \
+      --group flight \
+      --group http \
+      --update-reuse"
 	fi
 	if [[ $flag_count -eq 0 ]] || [[ $argc_dev -eq 1 ]]; then
-		runp "pdm lock --lockfile pdm.dev.lock --dev --update-reuse"
+		runp "pdm lock \
+      --lockfile pdm.dev.lock \
+      --dev \
+      --group cli \
+      --group kafka \
+      --group iggy \
+      --group flight \
+      --group http \
+      --update-reuse"
 	fi
 }
 
