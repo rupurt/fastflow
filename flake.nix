@@ -25,6 +25,11 @@
       get_dev_packages = groups:
         with groups;
           lint.packages
+          // cli.packages
+          // kafka.packages
+          // iggy.packages
+          // flight.packages
+          // http.packages
           // test.packages
           // dist.packages;
     in rec {
@@ -66,14 +71,14 @@
           self.packages.${system}.dev.devShell
         ];
 
-        # # dream2nix doesn't currently support automatically loading groups or PEP 735 yet
-        # # - https://github.com/nix-community/dream2nix/issues/1000
-        # # - https://peps.python.org/pep-0735/
-        # buildInputs =
-        #   []
-        #   ++ map (x: (pkgs.lib.head (pkgs.lib.attrValues x)).public) (
-        #     pkgs.lib.attrValues (get_dev_packages self.packages."${system}".dev.config.groups)
-        #   );
+        # dream2nix doesn't currently support automatically loading groups or PEP 735 yet
+        # - https://github.com/nix-community/dream2nix/issues/1000
+        # - https://peps.python.org/pep-0735/
+        buildInputs =
+          []
+          ++ map (x: (pkgs.lib.head (pkgs.lib.attrValues x)).public) (
+            pkgs.lib.attrValues (get_dev_packages self.packages."${system}".dev.config.groups)
+          );
 
         packages = with pkgs; [
           packages.dev

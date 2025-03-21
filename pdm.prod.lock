@@ -2,17 +2,20 @@
 # It is not intended for manual editing.
 
 [metadata]
-groups = ["default"]
+groups = ["default", "cli", "flight", "http", "iggy", "kafka"]
 strategy = ["cross_platform", "inherit_metadata"]
-lock_version = "4.4.1"
-content_hash = "sha256:5ecb02b37a13dfaf025f668e5fa7e362d65e861512a9ee46ec045eb2e53bdd14"
+lock_version = "4.5.0"
+content_hash = "sha256:9da4fd50c7ae22cdded0e97a5365a0ce29fbf378ab1763fd0e53417d92e9a8f6"
+
+[[metadata.targets]]
+requires_python = ">=3.12"
 
 [[package]]
 name = "aiokafka"
 version = "0.12.0"
 requires_python = ">=3.9"
 summary = "Kafka integration with asyncio"
-groups = ["default"]
+groups = ["kafka"]
 dependencies = [
     "async-timeout",
     "packaging",
@@ -40,7 +43,7 @@ version = "0.12.0"
 extras = ["zstd"]
 requires_python = ">=3.9"
 summary = "Kafka integration with asyncio"
-groups = ["default"]
+groups = ["kafka"]
 dependencies = [
     "aiokafka==0.12.0",
     "cramjam",
@@ -67,6 +70,9 @@ version = "0.7.0"
 requires_python = ">=3.8"
 summary = "Reusable constraint types to use with typing.Annotated"
 groups = ["default"]
+dependencies = [
+    "typing-extensions>=4.0.0; python_version < \"3.9\"",
+]
 files = [
     {file = "annotated_types-0.7.0-py3-none-any.whl", hash = "sha256:1f02e8b43a8fbbc3f3e0d4f0f4bfc8131bcb4eebe8849b8e5c773f3a1c582a53"},
     {file = "annotated_types-0.7.0.tar.gz", hash = "sha256:aff07c09a53a08bc8cfccb9c85b05f1aa9a2a6f23728d790723543408344ce89"},
@@ -77,8 +83,9 @@ name = "anyio"
 version = "4.9.0"
 requires_python = ">=3.9"
 summary = "High level compatibility layer for multiple asynchronous event loop implementations"
-groups = ["default"]
+groups = ["default", "http"]
 dependencies = [
+    "exceptiongroup>=1.0.2; python_version < \"3.11\"",
     "idna>=2.8",
     "sniffio>=1.1",
     "typing-extensions>=4.5; python_version < \"3.13\"",
@@ -93,7 +100,7 @@ name = "async-timeout"
 version = "5.0.1"
 requires_python = ">=3.8"
 summary = "Timeout context manager for asyncio programs"
-groups = ["default"]
+groups = ["kafka"]
 files = [
     {file = "async_timeout-5.0.1-py3-none-any.whl", hash = "sha256:39e3809566ff85354557ec2398b55e096c8364bacac9405a7a1fa429e77fe76c"},
     {file = "async_timeout-5.0.1.tar.gz", hash = "sha256:d9321a7a3d5a6a5e187e824d2fa0793ce379a202935782d555d6e9d2735677d3"},
@@ -104,7 +111,7 @@ name = "certifi"
 version = "2025.1.31"
 requires_python = ">=3.6"
 summary = "Python package for providing Mozilla's CA Bundle."
-groups = ["default"]
+groups = ["http"]
 files = [
     {file = "certifi-2025.1.31-py3-none-any.whl", hash = "sha256:ca78db4565a652026a4db2bcdf68f2fb589ea80d0be70e03929ed730746b84fe"},
     {file = "certifi-2025.1.31.tar.gz", hash = "sha256:3d5da6925056f6f18f119200434a4780a94263f10d1c21d032a6f6b2baa20651"},
@@ -115,9 +122,10 @@ name = "click"
 version = "8.1.8"
 requires_python = ">=3.7"
 summary = "Composable command line interface toolkit"
-groups = ["default"]
+groups = ["cli", "http"]
 dependencies = [
     "colorama; platform_system == \"Windows\"",
+    "importlib-metadata; python_version < \"3.8\"",
 ]
 files = [
     {file = "click-8.1.8-py3-none-any.whl", hash = "sha256:63c132bbbed01578a06712a2d1f497bb62d9c1c0d329b7903a866228027263b2"},
@@ -129,7 +137,7 @@ name = "colorama"
 version = "0.4.6"
 requires_python = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,>=2.7"
 summary = "Cross-platform colored terminal text."
-groups = ["default"]
+groups = ["cli", "http"]
 marker = "platform_system == \"Windows\""
 files = [
     {file = "colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"},
@@ -141,7 +149,7 @@ name = "cramjam"
 version = "2.9.1"
 requires_python = ">=3.8"
 summary = "Thin Python bindings to de/compression algorithms in Rust"
-groups = ["default"]
+groups = ["kafka"]
 files = [
     {file = "cramjam-2.9.1-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:79417957972553502b217a0093532e48893c8b4ca30ccc941cefe9c72379df7c"},
     {file = "cramjam-2.9.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:ce2b94117f373defc876f88e74e44049a9969223dbca3240415b71752d0422fb"},
@@ -171,26 +179,47 @@ files = [
     {file = "cramjam-2.9.1-cp313-cp313-musllinux_1_1_x86_64.whl", hash = "sha256:8dc5207567459d049696f62a1fdfb220f3fe6aa0d722285d44753e12504dac6c"},
     {file = "cramjam-2.9.1-cp313-cp313-win32.whl", hash = "sha256:fbfe35929a61b914de9e5dbacde0cfbba86cbf5122f9285a24c14ed0b645490b"},
     {file = "cramjam-2.9.1-cp313-cp313-win_amd64.whl", hash = "sha256:06068bd191a82ad4fc1ac23d6f8627fb5e37ec4be0431711b9a2dbacaccfeddb"},
-    {file = "cramjam-2.9.1-pp310-pypy310_pp73-macosx_10_12_x86_64.whl", hash = "sha256:86824c695688fcd06c5ac9bbd3fea9bdfb4cca194b1e706fbf11a629df48d2b4"},
-    {file = "cramjam-2.9.1-pp310-pypy310_pp73-macosx_11_0_arm64.whl", hash = "sha256:27571bfa5a5d618604696747d0dc1d2a99b5906c967c8dee53c13a7107edfde6"},
-    {file = "cramjam-2.9.1-pp310-pypy310_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:fb01f6e38719818778144d3165a89ea1ad9dc58c6342b7f20aa194c70f34cbd1"},
-    {file = "cramjam-2.9.1-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6b5cef5cf40725fe64592af9ec163e7389855077700678a1d94bec549403a74d"},
-    {file = "cramjam-2.9.1-pp310-pypy310_pp73-win_amd64.whl", hash = "sha256:ac48b978aa0675f62b642750e798c394a64d25ce852e4e541f69bef9a564c2f0"},
     {file = "cramjam-2.9.1.tar.gz", hash = "sha256:336cc591d86cbd225d256813779f46624f857bc9c779db126271eff9ddc524ae"},
 ]
 
 [[package]]
+name = "duckdb"
+version = "1.2.1"
+requires_python = ">=3.7.0"
+summary = "DuckDB in-process database"
+groups = ["cli"]
+files = [
+    {file = "duckdb-1.2.1-cp312-cp312-macosx_12_0_arm64.whl", hash = "sha256:7e587410e05343ffaf9a21bacb6811aad253bd443ab4ff869fdaa645908f47a4"},
+    {file = "duckdb-1.2.1-cp312-cp312-macosx_12_0_universal2.whl", hash = "sha256:8cb84295cafbf2510326f4ae18d401fc2d45b6d4811c43f1b7451a69a0a74f5f"},
+    {file = "duckdb-1.2.1-cp312-cp312-macosx_12_0_x86_64.whl", hash = "sha256:1b6dfefadc455347a2c649d41ebd561b32574b4191508043c9ee81fa0da95485"},
+    {file = "duckdb-1.2.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3d75d9fdf5865399f634d824c8d427c7666d1f2c640115178115459fa69b20b0"},
+    {file = "duckdb-1.2.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d4a05d182d1dec1ff4acb53a266b3b8024afcc1ed0d399f5784ff1607a4271e9"},
+    {file = "duckdb-1.2.1-cp312-cp312-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:317af7385b4f1d0c90ca029a71ce3d4f9571549c162798d58a0b20ba0a11762e"},
+    {file = "duckdb-1.2.1-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:41fca1666d0905e929ede0899a4275d67835a285b98e28fce446e8c3e53cfe8c"},
+    {file = "duckdb-1.2.1-cp312-cp312-win_amd64.whl", hash = "sha256:f8f19f145442dbdfae029b68208fc237816f70b3d25bb77ed31ace79b6059fa5"},
+    {file = "duckdb-1.2.1-cp313-cp313-macosx_12_0_arm64.whl", hash = "sha256:bc9ed3adea35e7e688750e80330b5b93cd430483d68a5f880dac76bedca14c0e"},
+    {file = "duckdb-1.2.1-cp313-cp313-macosx_12_0_universal2.whl", hash = "sha256:b26ff415d89860b7013d711fce916f919ad058dbf0a3fc4bcdff5323ec4bbfa0"},
+    {file = "duckdb-1.2.1-cp313-cp313-macosx_12_0_x86_64.whl", hash = "sha256:0e26037b138a22f72fe44697b605ccac06e223c108b3f4a3e91e7ffad45ee673"},
+    {file = "duckdb-1.2.1-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:6e2f530e8290e4b2d2c341bc709a6a0c9ec7a0e1c7a4679afa7bd4db972fcf12"},
+    {file = "duckdb-1.2.1-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:7985129c4bc810cb08938043822bb1fc4b67c11f4c1b025527f9c888e0638b6a"},
+    {file = "duckdb-1.2.1-cp313-cp313-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:be76e55e9a36febcb0c7c7c28b8fae0b33bbcf6a84b3b23eb23e7ee3e65e3394"},
+    {file = "duckdb-1.2.1-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:d8f5066ae9acc6cee22c7a455696511d993bdbfc55bb9466360b073b5c8cba67"},
+    {file = "duckdb-1.2.1-cp313-cp313-win_amd64.whl", hash = "sha256:6112711457b6014ac041492bedf8b6a97403666aefa20a4a4f3479db10136501"},
+    {file = "duckdb-1.2.1.tar.gz", hash = "sha256:15d49030d04572540cc1c8ad8a491ce018a590ec995d5d38c8f5f75b6422413e"},
+]
+
+[[package]]
 name = "faker"
-version = "37.0.1"
+version = "37.0.2"
 requires_python = ">=3.9"
 summary = "Faker is a Python package that generates fake data for you."
-groups = ["default"]
+groups = ["http"]
 dependencies = [
     "tzdata",
 ]
 files = [
-    {file = "faker-37.0.1-py3-none-any.whl", hash = "sha256:92bb009dcc708244b446be2f0c11a843fca90ea6e412a2addfef0cf2849c94f9"},
-    {file = "faker-37.0.1.tar.gz", hash = "sha256:3a71763f28d796c1d770b90e6b7519d75120a84b5dc4cdd27237870cc0451ff7"},
+    {file = "faker-37.0.2-py3-none-any.whl", hash = "sha256:8955706c56c28099585e9e2b6f814eb0a3a227eb36a2ee3eb9ab577c4764eacc"},
+    {file = "faker-37.0.2.tar.gz", hash = "sha256:948bd27706478d3aa0b6f9f58b9f25207098f6ca79852c7b49c44a8ced2bc59b"},
 ]
 
 [[package]]
@@ -202,6 +231,7 @@ groups = ["default"]
 dependencies = [
     "anyio<5.0.0,>=3.0.0",
     "pydantic!=1.8,!=1.8.1,<3.0.0,>=1.7.4",
+    "typing-extensions<4.12.1; python_version < \"3.9\"",
 ]
 files = [
     {file = "fast_depends-2.4.12-py3-none-any.whl", hash = "sha256:9e5d110ddc962329e46c9b35e5fe65655984247a13ee3ca5a33186db7d2d75c2"},
@@ -224,7 +254,10 @@ name = "h11"
 version = "0.14.0"
 requires_python = ">=3.7"
 summary = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
-groups = ["default"]
+groups = ["http"]
+dependencies = [
+    "typing-extensions; python_version < \"3.8\"",
+]
 files = [
     {file = "h11-0.14.0-py3-none-any.whl", hash = "sha256:e3fe4ac4b851c468cc8363d500db52c2ead036020723024a109d37346efaa761"},
     {file = "h11-0.14.0.tar.gz", hash = "sha256:8f19fbbe99e72420ff35c00b27a34cb9937e902a8b810e2c88300c6f0a3b699d"},
@@ -235,7 +268,7 @@ name = "httpcore"
 version = "1.0.7"
 requires_python = ">=3.8"
 summary = "A minimal low-level HTTP client."
-groups = ["default"]
+groups = ["http"]
 dependencies = [
     "certifi",
     "h11<0.15,>=0.13",
@@ -250,7 +283,7 @@ name = "httpx"
 version = "0.28.1"
 requires_python = ">=3.8"
 summary = "The next generation HTTP client."
-groups = ["default"]
+groups = ["http"]
 dependencies = [
     "anyio",
     "certifi",
@@ -267,10 +300,51 @@ name = "idna"
 version = "3.10"
 requires_python = ">=3.6"
 summary = "Internationalized Domain Names in Applications (IDNA)"
-groups = ["default"]
+groups = ["default", "http"]
 files = [
     {file = "idna-3.10-py3-none-any.whl", hash = "sha256:946d195a0d259cbba61165e88e65941f16e9b36ea6ddb97f00452bae8b1287d3"},
     {file = "idna-3.10.tar.gz", hash = "sha256:12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9"},
+]
+
+[[package]]
+name = "iggy-py"
+version = "0.4.0"
+requires_python = ">=3.7"
+summary = "Apache Iggy is the persistent message streaming platform written in Rust, supporting QUIC, TCP and HTTP transport protocols, capable of processing millions of messages per second."
+groups = ["iggy"]
+files = [
+    {file = "iggy_py-0.4.0-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:5103a9dad47231096375ad306857eeda9c5352d7c407605b24d11ac6ef24295e"},
+    {file = "iggy_py-0.4.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:93d157b205a5b5cd76f57f7bfeeda45015bcd91bf22de5f05078708a73105a43"},
+    {file = "iggy_py-0.4.0-cp312-cp312-manylinux_2_28_aarch64.whl", hash = "sha256:63b777f21a47b70de1751a1adae23de6ef50ff8076e0225974ceeaf2bcc347db"},
+    {file = "iggy_py-0.4.0-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:08189cfcebae4566f05781ef01342f5648eba99d785bc52205762ef7bc470e99"},
+    {file = "iggy_py-0.4.0-cp312-cp312-win_amd64.whl", hash = "sha256:12f98ee2b4e2200f24839e4b7235d9583459556e2f6e5bfedbf650f1747841b2"},
+    {file = "iggy_py-0.4.0-cp313-cp313-macosx_10_12_x86_64.whl", hash = "sha256:b92a375abd88947f47a51077abf80cb90673ad3e4012e43088a8ef86fff4452a"},
+    {file = "iggy_py-0.4.0-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:e1996695a6d523bdc9153acd62ccb553849bb724d6a7ffa5f8501fcdf755a992"},
+    {file = "iggy_py-0.4.0-cp313-cp313-manylinux_2_28_aarch64.whl", hash = "sha256:4dc9c7ba63677c62f64399a5ce1f603390b4b00a4b4ffeead5440b70f0f273a8"},
+    {file = "iggy_py-0.4.0-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:2afcce7fd729c6187f829f7bd6e8e466b065caeae9085d036238a1370d968db2"},
+    {file = "iggy_py-0.4.0-cp313-cp313-win_amd64.whl", hash = "sha256:4a36277decc68868e3b469cb512e96fcfc6ece6b18b57ec6389c07da2e90cd97"},
+    {file = "iggy_py-0.4.0.tar.gz", hash = "sha256:2342de4e71bfdce835b5f55554d1a1294e1bdac63d95c6fd96fda1d39c409083"},
+]
+
+[[package]]
+name = "kuzu"
+version = "0.8.2"
+summary = "Highly scalable, extremely fast, easy-to-use embeddable graph database"
+groups = ["default"]
+files = [
+    {file = "kuzu-0.8.2-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:adcc250b34963a6eea62b59d47a091018d83e61fb2e95552795ab61f103052be"},
+    {file = "kuzu-0.8.2-cp312-cp312-macosx_11_0_x86_64.whl", hash = "sha256:f72036924466143675980baed02a26c0fca15b6254c11de9a9c18d28fe66247e"},
+    {file = "kuzu-0.8.2-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:a2fd7895fdfd9df880091d32bfb79c148f849659c67e2b9e185f952a6bde9139"},
+    {file = "kuzu-0.8.2-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:68486e291aa8a61264be7e31233ec34eeb6da2402f4b980c3f2b67f9ccbbea3a"},
+    {file = "kuzu-0.8.2-cp312-cp312-win_amd64.whl", hash = "sha256:7cce7d06e6f09cd488c62be7cafe78752b037ed9e6585ed3da9df029104b1987"},
+    {file = "kuzu-0.8.2-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:aa0495f856f2e5f5067e281dab3fbc170aba0721d1f56156a8cd9fa50e706f91"},
+    {file = "kuzu-0.8.2-cp313-cp313-macosx_11_0_x86_64.whl", hash = "sha256:823577b472ba63c3b36e5ff81e2b744736f9eaf0b71585c247f3defc9d268f53"},
+    {file = "kuzu-0.8.2-cp313-cp313-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:bde76f38d293f49ad283a4831bd32d41f185b93a75d388d67f9b8996678203e9"},
+    {file = "kuzu-0.8.2-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:cdb189012613ecd26630096796e3817c260deea85782e764309cd36b2c39dac5"},
+    {file = "kuzu-0.8.2-cp313-cp313-win_amd64.whl", hash = "sha256:71fb98721f9c46f960a5c3baea6b083026485c4b9a3e74ab01418243e29e3753"},
+    {file = "kuzu-0.8.2-cp313-cp313t-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:8e12726af2cb552ab7b60e2b4312469359bb3b4b45ddbcfb75220def4be6f566"},
+    {file = "kuzu-0.8.2-cp313-cp313t-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:055f2cd9741bf39161f9ccff80428f8fb80b1910b2450b05bbe848487ba694f5"},
+    {file = "kuzu-0.8.2.tar.gz", hash = "sha256:68ad72b3ef6a32a41ecfa955fa4ca9ca0c8a36d3a1bc13e34cc70c971b2b8ca7"},
 ]
 
 [[package]]
@@ -278,11 +352,14 @@ name = "litestar"
 version = "2.15.1"
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
-groups = ["default"]
+groups = ["http"]
 dependencies = [
     "anyio>=3",
     "click",
+    "exceptiongroup; python_version < \"3.11\"",
     "httpx>=0.22",
+    "importlib-metadata; python_version < \"3.10\"",
+    "importlib-resources>=5.12.0; python_version < \"3.9\"",
     "litestar-htmx>=0.4.0",
     "msgspec>=0.18.2",
     "multidict>=6.0.2",
@@ -303,7 +380,7 @@ name = "litestar-htmx"
 version = "0.4.1"
 requires_python = "<4.0,>=3.8"
 summary = "HTMX Integration for Litesstar"
-groups = ["default"]
+groups = ["http"]
 files = [
     {file = "litestar_htmx-0.4.1-py3-none-any.whl", hash = "sha256:ba2a8ff1e210f21980735b9cde13d239a2b7c3627cb4aeb425d66f4a314d1a59"},
     {file = "litestar_htmx-0.4.1.tar.gz", hash = "sha256:ba2537008eb8cc18bfc8bee5cecb280924c7818bb1c066d79eae4b221696ca08"},
@@ -315,7 +392,7 @@ version = "2.15.1"
 extras = ["prometheus", "structlog"]
 requires_python = "<4.0,>=3.8"
 summary = "Litestar - A production-ready, highly performant, extensible ASGI API Framework"
-groups = ["default"]
+groups = ["http"]
 dependencies = [
     "litestar==2.15.1",
     "prometheus-client",
@@ -331,7 +408,7 @@ name = "markdown-it-py"
 version = "3.0.0"
 requires_python = ">=3.8"
 summary = "Python port of markdown-it. Markdown parsing, done right!"
-groups = ["default"]
+groups = ["cli", "http"]
 dependencies = [
     "mdurl~=0.1",
 ]
@@ -345,7 +422,7 @@ name = "mdurl"
 version = "0.1.2"
 requires_python = ">=3.7"
 summary = "Markdown URL utilities"
-groups = ["default"]
+groups = ["cli", "http"]
 files = [
     {file = "mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8"},
     {file = "mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba"},
@@ -356,7 +433,7 @@ name = "msgspec"
 version = "0.19.0"
 requires_python = ">=3.9"
 summary = "A fast serialization and validation library, with builtin support for JSON, MessagePack, YAML, and TOML."
-groups = ["default"]
+groups = ["http"]
 files = [
     {file = "msgspec-0.19.0-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:f98bd8962ad549c27d63845b50af3f53ec468b6318400c9f1adfe8b092d7b62f"},
     {file = "msgspec-0.19.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:43bbb237feab761b815ed9df43b266114203f53596f9b6e6f00ebd79d178cdf2"},
@@ -380,7 +457,10 @@ name = "multidict"
 version = "6.2.0"
 requires_python = ">=3.9"
 summary = "multidict implementation"
-groups = ["default"]
+groups = ["http"]
+dependencies = [
+    "typing-extensions>=4.1.0; python_version < \"3.11\"",
+]
 files = [
     {file = "multidict-6.2.0-cp312-cp312-macosx_10_13_universal2.whl", hash = "sha256:437c33561edb6eb504b5a30203daf81d4a9b727e167e78b0854d9a4e18e8950b"},
     {file = "multidict-6.2.0-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:9f49585f4abadd2283034fc605961f40c638635bc60f5162276fec075f2e37a4"},
@@ -436,7 +516,7 @@ name = "multipart"
 version = "1.2.1"
 requires_python = ">=3.8"
 summary = "Parser for multipart/form-data"
-groups = ["default"]
+groups = ["http"]
 files = [
     {file = "multipart-1.2.1-py3-none-any.whl", hash = "sha256:c03dc203bc2e67f6b46a599467ae0d87cf71d7530504b2c1ff4a9ea21d8b8c8c"},
     {file = "multipart-1.2.1.tar.gz", hash = "sha256:829b909b67bc1ad1c6d4488fcdc6391c2847842b08323addf5200db88dbe9480"},
@@ -494,7 +574,7 @@ name = "packaging"
 version = "24.2"
 requires_python = ">=3.8"
 summary = "Core utilities for Python packages"
-groups = ["default"]
+groups = ["kafka"]
 files = [
     {file = "packaging-24.2-py3-none-any.whl", hash = "sha256:09abb1bccd265c01f4a3aa3f7a7db064b36514d2cba19a2f694fe6150451a759"},
     {file = "packaging-24.2.tar.gz", hash = "sha256:c228a6dc5e932d346bc5739379109d49e8853dd8223571c7c5b55260edc0b97f"},
@@ -502,17 +582,17 @@ files = [
 
 [[package]]
 name = "polyfactory"
-version = "2.19.0"
+version = "2.20.0"
 requires_python = "<4.0,>=3.8"
 summary = "Mock data generation factories"
-groups = ["default"]
+groups = ["http"]
 dependencies = [
-    "faker",
+    "faker>=5.0.0",
     "typing-extensions>=4.6.0",
 ]
 files = [
-    {file = "polyfactory-2.19.0-py3-none-any.whl", hash = "sha256:0137f5eaf1bc31c62c16ccbab9467e96a7352748ca426ef363bd081c149a3e3f"},
-    {file = "polyfactory-2.19.0.tar.gz", hash = "sha256:6d4273fb1f23e1fccc7aa7c64e28ddc3c20105cc499df32ebc478465daa7fa72"},
+    {file = "polyfactory-2.20.0-py3-none-any.whl", hash = "sha256:6a808454bb03afacf54abeeb50d79b86c9e5b8476efc2bc3788e5ece26dd561a"},
+    {file = "polyfactory-2.20.0.tar.gz", hash = "sha256:86017160f05332baadb5eaf89885e1ba7bb447a3140e46ba4546848c76cbdec5"},
 ]
 
 [[package]]
@@ -520,7 +600,7 @@ name = "prometheus-client"
 version = "0.21.1"
 requires_python = ">=3.8"
 summary = "Python client for the Prometheus monitoring system."
-groups = ["default"]
+groups = ["default", "http"]
 files = [
     {file = "prometheus_client-0.21.1-py3-none-any.whl", hash = "sha256:594b45c410d6f4f8888940fe80b5cc2521b305a1fafe1c58609ef715a001f301"},
     {file = "prometheus_client-0.21.1.tar.gz", hash = "sha256:252505a722ac04b0456be05c05f75f45d760c2911ffc45f2a06bcaed9f3ae3fb"},
@@ -531,7 +611,7 @@ name = "pyarrow"
 version = "19.0.1"
 requires_python = ">=3.9"
 summary = "Python library for Apache Arrow"
-groups = ["default"]
+groups = ["default", "flight"]
 files = [
     {file = "pyarrow-19.0.1-cp312-cp312-macosx_12_0_arm64.whl", hash = "sha256:80b2ad2b193e7d19e81008a96e313fbd53157945c7be9ac65f44f8937a55427b"},
     {file = "pyarrow-19.0.1-cp312-cp312-macosx_12_0_x86_64.whl", hash = "sha256:ee8dec072569f43835932a3b10c55973593abc00936c202707a4ad06af7cb294"},
@@ -562,7 +642,7 @@ version = "19.0.1"
 extras = ["flight"]
 requires_python = ">=3.9"
 summary = "Python library for Apache Arrow"
-groups = ["default"]
+groups = ["flight"]
 dependencies = [
     "pyarrow==19.0.1",
 ]
@@ -715,7 +795,7 @@ name = "pygments"
 version = "2.19.1"
 requires_python = ">=3.8"
 summary = "Pygments is a syntax highlighting package written in Python."
-groups = ["default"]
+groups = ["cli", "http"]
 files = [
     {file = "pygments-2.19.1-py3-none-any.whl", hash = "sha256:9ea1544ad55cecf4b8242fab6dd35a93bbce657034b0611ee383099054ab6d8c"},
     {file = "pygments-2.19.1.tar.gz", hash = "sha256:61c16d2a8576dc0649d9f39e089b5f02bcd27fba10d8fb4dcc28173f7a45151f"},
@@ -737,7 +817,7 @@ name = "pyyaml"
 version = "6.0.2"
 requires_python = ">=3.8"
 summary = "YAML parser and emitter for Python"
-groups = ["default"]
+groups = ["default", "http"]
 files = [
     {file = "PyYAML-6.0.2-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:c70c95198c015b85feafc136515252a261a84561b7b1d51e3384e0655ddf25ab"},
     {file = "PyYAML-6.0.2-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:ce826d6ef20b1bc864f0a68340c8b3287705cae2f8b4b1d932177dcc76721725"},
@@ -765,10 +845,11 @@ name = "rich"
 version = "13.9.4"
 requires_python = ">=3.8.0"
 summary = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
-groups = ["default"]
+groups = ["cli", "http"]
 dependencies = [
     "markdown-it-py>=2.2.0",
     "pygments<3.0.0,>=2.13.0",
+    "typing-extensions<5.0,>=4.0.0; python_version < \"3.11\"",
 ]
 files = [
     {file = "rich-13.9.4-py3-none-any.whl", hash = "sha256:6049d5e6ec054bf2779ab3358186963bac2ea89175919d699e378b99738c2a90"},
@@ -780,9 +861,10 @@ name = "rich-click"
 version = "1.8.8"
 requires_python = ">=3.7"
 summary = "Format click help output nicely with rich"
-groups = ["default"]
+groups = ["http"]
 dependencies = [
     "click>=7",
+    "importlib-metadata; python_version < \"3.8\"",
     "rich>=10.7",
     "typing-extensions>=4",
 ]
@@ -796,7 +878,7 @@ name = "shellingham"
 version = "1.5.4"
 requires_python = ">=3.7"
 summary = "Tool to Detect Surrounding Shell"
-groups = ["default"]
+groups = ["cli"]
 files = [
     {file = "shellingham-1.5.4-py2.py3-none-any.whl", hash = "sha256:7ecfff8f2fd72616f7481040475a65b2bf8af90a56c89140852d1120324e8686"},
     {file = "shellingham-1.5.4.tar.gz", hash = "sha256:8dbca0739d487e5bd35ab3ca4b36e11c4078f3a234bfce294b0a0291363404de"},
@@ -807,7 +889,7 @@ name = "sniffio"
 version = "1.3.1"
 requires_python = ">=3.7"
 summary = "Sniff out which async library your code is running under"
-groups = ["default"]
+groups = ["default", "http"]
 files = [
     {file = "sniffio-1.3.1-py3-none-any.whl", hash = "sha256:2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2"},
     {file = "sniffio-1.3.1.tar.gz", hash = "sha256:f4324edc670a0f49750a81b895f35c3adb843cca46f0530f79fc1babb23789dc"},
@@ -818,7 +900,10 @@ name = "structlog"
 version = "25.2.0"
 requires_python = ">=3.8"
 summary = "Structured Logging for Python"
-groups = ["default"]
+groups = ["default", "http"]
+dependencies = [
+    "typing-extensions; python_version < \"3.11\"",
+]
 files = [
     {file = "structlog-25.2.0-py3-none-any.whl", hash = "sha256:0fecea2e345d5d491b72f3db2e5fcd6393abfc8cd06a4851f21fcd4d1a99f437"},
     {file = "structlog-25.2.0.tar.gz", hash = "sha256:d9f9776944207d1035b8b26072b9b140c63702fd7aa57c2f85d28ab701bd8e92"},
@@ -829,7 +914,7 @@ name = "typer"
 version = "0.15.2"
 requires_python = ">=3.7"
 summary = "Typer, build great CLIs. Easy to code. Based on Python type hints."
-groups = ["default"]
+groups = ["cli"]
 dependencies = [
     "click>=8.0.0",
     "rich>=10.11.0",
@@ -846,7 +931,7 @@ name = "typerutils"
 version = "0.0.1"
 requires_python = ">=3.11"
 summary = "Typer utility helpers"
-groups = ["default"]
+groups = ["cli"]
 dependencies = [
     "typer>=0.9.0",
 ]
@@ -860,7 +945,7 @@ name = "typing-extensions"
 version = "4.12.2"
 requires_python = ">=3.8"
 summary = "Backported and Experimental Type Hints for Python 3.8+"
-groups = ["default"]
+groups = ["default", "cli", "http", "kafka"]
 files = [
     {file = "typing_extensions-4.12.2-py3-none-any.whl", hash = "sha256:04e5ca0351e0f3f85c6853954072df659d0d13fac324d0072316b67d7794700d"},
     {file = "typing_extensions-4.12.2.tar.gz", hash = "sha256:1a7ead55c7e559dd4dee8856e3a88b41225abfe1ce8df57b7c13915fe121ffb8"},
@@ -871,7 +956,7 @@ name = "tzdata"
 version = "2025.1"
 requires_python = ">=2"
 summary = "Provider of IANA time zone data"
-groups = ["default"]
+groups = ["http"]
 files = [
     {file = "tzdata-2025.1-py2.py3-none-any.whl", hash = "sha256:7e127113816800496f027041c570f50bcd464a020098a3b6b199517772303639"},
     {file = "tzdata-2025.1.tar.gz", hash = "sha256:24894909e88cdb28bd1636c6887801df64cb485bd593f2fd83ef29075a81d694"},
@@ -903,14 +988,25 @@ files = [
 ]
 
 [[package]]
-name = "uuid6"
-version = "2024.7.10"
-requires_python = ">=3.8"
-summary = "New time-based UUID formats which are suited for use as a database key"
+name = "uuid-utils"
+version = "0.10.0"
+requires_python = ">=3.9"
+summary = "Drop-in replacement for Python UUID in Rust"
 groups = ["default"]
 files = [
-    {file = "uuid6-2024.7.10-py3-none-any.whl", hash = "sha256:93432c00ba403751f722829ad21759ff9db051dea140bf81493271e8e4dd18b7"},
-    {file = "uuid6-2024.7.10.tar.gz", hash = "sha256:2d29d7f63f593caaeea0e0d0dd0ad8129c9c663b29e19bdf882e864bedf18fb0"},
+    {file = "uuid_utils-0.10.0-cp39-abi3-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl", hash = "sha256:8d5a4508feefec62456cd6a41bcdde458d56827d908f226803b886d22a3d5e63"},
+    {file = "uuid_utils-0.10.0-cp39-abi3-macosx_10_12_x86_64.whl", hash = "sha256:dbefc2b9113f9dfe56bdae58301a2b3c53792221410d422826f3d1e3e6555fe7"},
+    {file = "uuid_utils-0.10.0-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ffc49c33edf87d1ec8112a9b43e4cf55326877716f929c165a2cc307d31c73d5"},
+    {file = "uuid_utils-0.10.0-cp39-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:0636b6208f69d5a4e629707ad2a89a04dfa8d1023e1999181f6830646ca048a1"},
+    {file = "uuid_utils-0.10.0-cp39-abi3-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:7bc06452856b724df9dedfc161c3582199547da54aeb81915ec2ed54f92d19b0"},
+    {file = "uuid_utils-0.10.0-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:263b2589111c61decdd74a762e8f850c9e4386fb78d2cf7cb4dfc537054cda1b"},
+    {file = "uuid_utils-0.10.0-cp39-abi3-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:a558db48b7096de6b4d2d2210d82bba8586a6d55f99106b03bb7d01dc5c5bcd6"},
+    {file = "uuid_utils-0.10.0-cp39-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:807465067f3c892514230326ac71a79b28a8dfe2c88ecd2d5675fc844f3c76b5"},
+    {file = "uuid_utils-0.10.0-cp39-abi3-musllinux_1_2_i686.whl", hash = "sha256:57423d4a2b9d7b916de6dbd75ba85465a28f9578a89a97f7d3e098d9aa4e5d4a"},
+    {file = "uuid_utils-0.10.0-cp39-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:76d8d660f18ff6b767e319b1b5f927350cd92eafa4831d7ef5b57fdd1d91f974"},
+    {file = "uuid_utils-0.10.0-cp39-abi3-win32.whl", hash = "sha256:6c11a71489338837db0b902b75e1ba7618d5d29f05fde4f68b3f909177dbc226"},
+    {file = "uuid_utils-0.10.0-cp39-abi3-win_amd64.whl", hash = "sha256:11c55ae64f6c0a7a0c741deae8ca2a4eaa11e9c09dbb7bec2099635696034cf7"},
+    {file = "uuid_utils-0.10.0.tar.gz", hash = "sha256:5db0e1890e8f008657ffe6ded4d9459af724ab114cfe82af1557c87545301539"},
 ]
 
 [[package]]
@@ -918,10 +1014,11 @@ name = "uvicorn"
 version = "0.34.0"
 requires_python = ">=3.9"
 summary = "The lightning-fast ASGI server."
-groups = ["default"]
+groups = ["http"]
 dependencies = [
     "click>=7.0",
     "h11>=0.8",
+    "typing-extensions>=4.0; python_version < \"3.11\"",
 ]
 files = [
     {file = "uvicorn-0.34.0-py3-none-any.whl", hash = "sha256:023dc038422502fa28a09c7a30bf2b6991512da7dcdb8fd35fe57cfc154126f4"},

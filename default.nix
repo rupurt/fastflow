@@ -41,5 +41,17 @@
   };
 
   overrides = {
+    aiokafka.mkDerivation = {
+      buildInputs = [
+        config.deps.pythonPackages.cython
+        config.deps.zlib
+      ];
+    };
+
+    duckdb.mkDerivation = {
+      buildInputs = [
+        config.deps.pythonPackages.pybind11
+      ];
+    };
   };
 }
