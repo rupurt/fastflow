@@ -2,7 +2,7 @@
 ![pypi](https://img.shields.io/pypi/v/pyfastflow.svg)
 ![versions](https://img.shields.io/pypi/pyversions/pyfastflow.svg)
 
-A modern Pythonic workflow and streaming engine
+Modern python streaming workflows
 
 ## Usage
 
